@@ -1,0 +1,46 @@
+#!/usr/bin/zsh
+
+########################################################
+##### Batch Skript fuer das Training des Mask R-CNN ####
+####### Stephan Sibirtsev and Mathias Neufang ##########
+########################################################
+
+#### SBATCH EINTRAEGE ERSTELLEN ####
+#### Pfade muessen entsprechend angepasst werden ####
+
+#### Job Name ####
+#SBATCH --job-name=<JobName>
+
+#### Pfad und Name der Outputdatei der Job Durchfuehrung ####
+#SBATCH --output=/home/<UserID>/.../<JobOutputFolderName>/%x_%J_output.txt
+
+#### Laufdauer des Jobs (wird durch das Testen von Jobs auf dem CPU node ermittelt, Rechendauer pro ausgewertetes Bild mit Anzahl der auszuwertenden Bilder und ggf. Sicherheitsfaktor multiplizieren) ####
+#SBATCH --time=0-00:00:00
+
+#### Arbeitsspeicherbedarf pro CPU (wird durch das Testen von Jobs auf dem GPU node ermittelt, ggf. Sicherheitsfaktor draufpacken. Empfehlung sind mind. 15G) ####
+#SBATCH --mem-per-cpu=15G
+
+#### Email Adresse ####
+#SBATCH --mail-user=<EmailAdress>
+
+#### Emails die erhalten werden sollen ####
+#SBATCH --mail-type=ALL
+
+#### Anzahl an tasks, die durchgefuehrt werden sollen ####
+#SBATCH --ntasks=1
+
+
+#### TERMINAL EINTRAEGE ERSTELLEN ####
+#### Pfade muessen entsprechend angepasst werden ####
+
+#### Pfad in welchem sich Anaconda befindet exportieren ####
+export PATH=$PATH:/home/<UserID>/anaconda3/bin
+
+#### Umgebung aktivieren ####
+source activate env_mrcnn_cpu
+
+#### Sich in den Pfad, wo sich das droplet.py Skript befindet navigieren ####
+cd /home/<UserID>/.../Mask_R_CNN/samples/droplet/
+
+#### Das droplet.py Skript ausfuehren ####
+python evaluate_droplet.py --dataset_path=<InputFolderName> --save_path=<OutputFolderName> --name_result_file=<ExcelFileName> --weights_path=<WeightsFolderName> --weights_name=<WeightsFileName> --masks=0 --device=0 --image_max=<MaxImageSize>
